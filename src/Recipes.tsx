@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
+import { Box, Paper, Stack, styled, CardMedia, CardContent, Typography } from '@mui/material';
+import './Recipes.css';
+import {v4 as uuidv4} from 'uuid';
 
 /* Resources:
     https://mui.com/components/stack/
@@ -10,7 +9,7 @@ import { styled } from '@mui/material/styles';
 */
 function Recipes() {
     const [recipes, setRecipes] = useState<Array<any>>([]);
-    let isError = false;
+    const [isError, setError] = useState(false);
     
     useEffect(() => {
         (async () => {
@@ -33,9 +32,9 @@ function Recipes() {
                 setRecipes(recipeAry);
             } else {
                 console.log('error: ' + response.status);
-                isError = true;
+                setError(true);
             }
-        })();
+        })().catch(() => {setError(true)});
     }, []);
 
     interface Recipe {
@@ -50,27 +49,46 @@ function Recipes() {
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: 'center',
+        textAlign: 'left',
         color: theme.palette.text.secondary,
     }));
       
     if(isError) {
         return (
-            <Box sx={{ width: '100%', bgcolor: 'primary.main' }}>
+            <Box sx={{ width: '100%'}}>
                 <p>Error loading data</p>
             </Box>
         );
     } else {
         if(recipes.length > 0) {
             return (
-                <Box sx={{bgcolor: '#E7EBF0', padding: 1}}>
-                    <Stack spacing={2}>
-                        {recipes.map((recipe, i) => (
-                            <Item key={i}>{recipe.name}</Item>
-                        ))}
-                    </Stack>
-                </Box>
+                <div className='recipe-container'>
+                    <Box sx={{bgcolor: '#E7EBF0', padding: 1}}>
+                        <Stack spacing={2}>
+                            {recipes.map((recipe) => (
+                                <Item key={recipe.name}>
+                                    <CardMedia component='img' image={recipe.image} />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            {recipe.name}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Ingredients: {recipe.ingredients.join(', ')}
+                                        </Typography>
+                                        <Typography variant="body1" color="text.secondary">
+                                            <ol className='recipe-directions'>
+                                                {recipe.directions.map((step: string) => (
+                                                    <li key={uuidv4()}>{step}</li>
+                                                ))}
+                                            </ol>
+                                        </Typography>
+                                    </CardContent>
+                                </Item>
+                            ))}
+                        </Stack>
+                    </Box>
+                </div>
+                
             );
         } else {
             return (

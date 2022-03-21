@@ -1,0 +1,15 @@
+.recipe-container {
+    width: 100%;
+    background-color: #E7EBF0;
+}
+
+.recipe-directions {
+    padding-inline-start: 1rem;
+}
+
+@media only screen and (min-width: 1024px) {
+    .recipe-container {
+        padding: 0 25% 0 25%;
+        box-sizing: border-box;
+    }
+}
