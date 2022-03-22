@@ -1,5 +1,5 @@
 import { Box, AppBar, Toolbar, Typography, Button, Modal, TextField} from '@mui/material';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 /*
     Resources:
@@ -18,11 +18,17 @@ const modalStyle = {
     p: 4,
   };
 
-function NavigationBar() {
+interface NavProps {
+    setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+
+function NavigationBar(props: NavProps) {
     const [open, setOpen] = useState(false);
     const [disabled, setDisabled] = useState(true);
     
     const handleOpen = () => setOpen(true);
+
     const handleClose = () => {
         setOpen(false);
         setDisabled(true);
@@ -46,6 +52,33 @@ function NavigationBar() {
         return isValid;
     }
 
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const usernameInput = document.getElementById('username') as HTMLInputElement;
+        const passwordInput = document.getElementById('password') as HTMLInputElement;
+        console.log('submitted: ' + usernameInput.value + ', ' + passwordInput.value);
+        verifyUser(usernameInput.value, passwordInput.value);
+    }
+
+    // fetch POST request to kazumirecipeapi to see if user in database, update isAdmin prop if so
+    function verifyUser(username: string, password: string) {
+        let data = new FormData();
+        data.append('username', username);
+        data.append('password', password);
+        fetch('https://kazumirecipeapi.uw.r.appspot.com/login', {
+            method: 'POST',
+            body: data
+        }).then(res => res.json()).then(readResponse).catch(console.error);
+    }
+
+    function readResponse(json: any) {
+        if(json.isAdmin) {
+            props.setAdmin(true);
+        } else {
+            props.setAdmin(false);
+        }
+    }
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -61,7 +94,7 @@ function NavigationBar() {
                     <Typography id="modal-modal-title" variant="h6" component="h2" sx={{marginBottom: '1rem'}}>
                         Login
                     </Typography>
-                    <form style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <form method='POST' onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <TextField id="username" onChange={handleChange} label="Username" variant="outlined" />
                         <TextField id="password" onChange={handleChange} label="Password" variant="outlined" />
                         <Button type='submit' id='submit' variant="contained" disabled={disabled}>
