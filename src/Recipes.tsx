@@ -16,7 +16,6 @@ function Recipes() {
             let response = await fetch("https://kazumirecipeapi.uw.r.appspot.com");
             if(response.ok) {
                 const recipeJson = await response.json();
-                console.log(recipeJson);
                 // setRecipes
                 let recipeAry = [];
                 for(let i = 0; i < recipeJson.data.length; i++) {
@@ -43,8 +42,6 @@ function Recipes() {
         ingredients: string[];
         image: string;
     }
-
-    console.log(recipes);
 
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -76,11 +73,9 @@ function Recipes() {
                                             Ingredients: {recipe.ingredients.join(', ')}
                                         </Typography>
                                         <Typography variant="body1" color="text.secondary">
-                                            <ol className='recipe-directions'>
-                                                {recipe.directions.map((step: string) => (
-                                                    <li key={uuidv4()}>{step}</li>
-                                                ))}
-                                            </ol>
+                                            {recipe.directions.map((step: string, i: number) => (
+                                                <span key={uuidv4()}>{i + 1}. {step}<br /></span>
+                                            ))}
                                         </Typography>
                                     </CardContent>
                                 </Item>
