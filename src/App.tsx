@@ -6,7 +6,6 @@ import AdminView from './AdminView';
 
 function App() {
   const [admin, setAdmin] = useState<boolean>(false);
-  console.log(admin);
 
   return (
     <div className="App">

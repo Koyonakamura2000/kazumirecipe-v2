@@ -26,9 +26,12 @@ interface NavProps {
 function NavigationBar(props: NavProps) {
     const [open, setOpen] = useState(false);
     const [disabled, setDisabled] = useState(true);
+    const [loginBtnText, setLoginBtnText] = useState('Login');
     
-    const handleOpen = () => setOpen(true);
-
+    const handleOpen = () => {
+        setOpen(true);
+    }
+    
     const handleClose = () => {
         setOpen(false);
         setDisabled(true);
@@ -56,8 +59,8 @@ function NavigationBar(props: NavProps) {
         event.preventDefault();
         const usernameInput = document.getElementById('username') as HTMLInputElement;
         const passwordInput = document.getElementById('password') as HTMLInputElement;
-        console.log('submitted: ' + usernameInput.value + ', ' + passwordInput.value);
         verifyUser(usernameInput.value, passwordInput.value);
+        setOpen(false);
     }
 
     // fetch POST request to kazumirecipeapi to see if user in database, update isAdmin prop if so
@@ -74,8 +77,10 @@ function NavigationBar(props: NavProps) {
     function readResponse(json: any) {
         if(json.isAdmin) {
             props.setAdmin(true);
+            setLoginBtnText('Log Out');
         } else {
             props.setAdmin(false);
+            setLoginBtnText('Log In');
         }
     }
 
@@ -84,23 +89,23 @@ function NavigationBar(props: NavProps) {
             <AppBar position="static">
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between'}} >
                 <h1 className='logo'>和美のレシピ</h1>
-                <Button onClick={handleOpen} color="inherit">Login</Button>
+                <Button onClick={handleOpen} color="inherit">{loginBtnText}</Button>
                 <Modal
                     open={open}
                     onClose={handleClose}
                     aria-labelledby="modal-modal-title"
                 >
                     <Box sx={modalStyle}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2" sx={{marginBottom: '1rem'}}>
-                        Login
-                    </Typography>
-                    <form method='POST' onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <TextField id="username" onChange={handleChange} label="Username" variant="outlined" />
-                        <TextField id="password" onChange={handleChange} label="Password" variant="outlined" />
-                        <Button type='submit' id='submit' variant="contained" disabled={disabled}>
-                            Submit
-                        </Button>
-                    </form>
+                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{marginBottom: '1rem'}}>
+                            Login
+                        </Typography>
+                        <form method='POST' onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <TextField id="username" onChange={handleChange} label="Username" variant="outlined" autoComplete='on'/>
+                            <TextField id="password" onChange={handleChange} label="Password" type='password' variant="outlined" autoComplete='off' />
+                            <Button type='submit' id='submit' variant="contained" disabled={disabled}>
+                                Submit
+                            </Button>
+                        </form>
                     </Box>
                 </Modal>
             </Toolbar>
