@@ -29,11 +29,9 @@ function AdminView() {
             // checking last element first
             if(i === newState.length - 1) {
                 if(newState[i].length > 0) {
-                    console.log('adding');
                     newState.push('');
                 }
             } else if(newState[i].length === 0) {
-                console.log('splicing');
                 newState.splice(i, 1);
             }
         }

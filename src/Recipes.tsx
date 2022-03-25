@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Paper, Stack, styled, CardMedia, CardContent, Typography } from '@mui/material';
+import { Box, Paper, styled, CardMedia, CardContent, Typography } from '@mui/material';
 import './Recipes.css';
 import {v4 as uuidv4} from 'uuid';
 
@@ -61,10 +61,10 @@ function Recipes() {
             return (
                 <div className='recipe-container'>
                     <Box sx={{bgcolor: '#E7EBF0', padding: 1}}>
-                        <Stack spacing={2}>
+                        <div className='recipe-grid'>
                             {recipes.map((recipe) => (
                                 <Item key={recipe.name}>
-                                    <CardMedia component='img' image={recipe.image} />
+                                    <CardMedia component='img' image={recipe.image} sx={{width: '100%', aspectRatio: '16/9'}}/>
                                     <CardContent>
                                         <Typography gutterBottom variant="h5" component="div">
                                             {recipe.name}
@@ -74,13 +74,13 @@ function Recipes() {
                                         </Typography>
                                         <Typography variant="body1" color="text.secondary">
                                             {recipe.directions.map((step: string, i: number) => (
-                                                <span key={uuidv4()}>{i + 1}. {step}<br /></span>
+                                                <span key={uuidv4()}>{i + 1}. {step}.<br /></span>
                                             ))}
                                         </Typography>
                                     </CardContent>
                                 </Item>
                             ))}
-                        </Stack>
+                        </div>
                     </Box>
                 </div>
                 

@@ -1,11 +1,25 @@
 .recipe-container {
     width: 100%;
     background-color: #E7EBF0;
+    min-height: 90vh;
+}
+
+.recipe-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 @media only screen and (min-width: 1024px) {
-    .recipe-container {
-        padding: 0 25% 0 25%;
-        box-sizing: border-box;
+    .recipe-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem 1rem;
+    }
+}
+
+@media only screen and (min-width: 1440px) {
+    .recipe-grid {
+        grid-template-columns: 1fr 1fr 1fr;
     }
 }

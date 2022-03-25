@@ -1,5 +1,7 @@
 import { Box, AppBar, Toolbar, Typography, Button, Modal, TextField} from '@mui/material';
 import React, { useState } from 'react';
+import { auth } from './App';
+import { signInWithCustomToken, signOut } from 'firebase/auth';
 
 /*
     Resources:
@@ -16,7 +18,7 @@ const modalStyle = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
-  };
+};
 
 interface NavProps {
     setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,7 +31,11 @@ function NavigationBar(props: NavProps) {
     const [loginBtnText, setLoginBtnText] = useState('Login');
     
     const handleOpen = () => {
-        setOpen(true);
+        if(loginBtnText === 'Login') {
+            setOpen(true);
+        } else {
+            handleLogout();
+        }
     }
     
     const handleClose = () => {
@@ -76,12 +82,23 @@ function NavigationBar(props: NavProps) {
 
     function readResponse(json: any) {
         if(json.isAdmin) {
-            props.setAdmin(true);
-            setLoginBtnText('Log Out');
+            handleLogin(json.token);
         } else {
-            props.setAdmin(false);
-            setLoginBtnText('Log In');
+            console.log('invalid user');
         }
+    }
+
+    function handleLogin(token: string) {
+        props.setAdmin(true);
+        signInWithCustomToken(auth, token).then((userCredential) => console.log(userCredential)).catch(console.log);
+        setLoginBtnText('Log Out');
+    }
+
+    function handleLogout() {
+        signOut(auth).then(() => {
+            props.setAdmin(false);
+            setLoginBtnText('Login');
+        }).catch((error) => console.log(error));
     }
 
     return (
