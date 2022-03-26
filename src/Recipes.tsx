@@ -69,7 +69,7 @@ function Recipes() {
                                         <Typography gutterBottom variant="h5" component="div">
                                             {recipe.name}
                                         </Typography>
-                                        <Typography variant="body2" color="text.secondary">
+                                        <Typography variant="body2" color="text.secondary" sx={{marginBottom: '2rem'}}>
                                             Ingredients: {recipe.ingredients.join(', ')}
                                         </Typography>
                                         <Typography variant="body1" color="text.secondary">

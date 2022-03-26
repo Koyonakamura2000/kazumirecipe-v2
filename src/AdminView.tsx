@@ -1,4 +1,4 @@
-import { Box, Typography, Button, TextField, Input} from '@mui/material';
+import { Box, Typography, Button, TextField, Input, Alert} from '@mui/material';
 import React, { useState } from 'react';
 import './AdminView.css';
 
@@ -9,15 +9,18 @@ import './AdminView.css';
 
 const formStyle = {
     position: 'absolute',
-    top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
+    top: '20vh',
+    transform: 'translate(-50%)',
     width: 'max(300px, 50%)',
+    paddingBottom: '20vh'
 }
 
 function AdminView() {
     const [ingredients, setIngredients] = useState(['']);
     const [directions, setDirections] = useState(['']);
+    const [failedUpload, setFailedUpload] = useState(false);
+    const [successfulUpload, setSuccessfulUpload] = useState(false);
 
     // This function could definitely be optimized
     function handleTextInputOnChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number, lastAry: string[], setState: React.Dispatch<React.SetStateAction<string[]>>) {
@@ -46,16 +49,24 @@ function AdminView() {
         // clean ingredients and directions to remove empty last element
         removeLast('ingredients', formData);
         removeLast('directions', formData);
-        console.log(formData.getAll('ingredients'));
         fetch('https://kazumirecipeapi.uw.r.appspot.com/addRecipe', {
             method: 'POST',
             body: formData
-        }).then(res => res.json()).then(handleResponse).catch(console.error);
+        }).then((res) => handleResponse(res)).catch(() => setFailedUpload(true));
     }
 
     // updates page to notify that the recipe has been added or rejected
-    function handleResponse(json: any) {
-        console.log(json);
+    async function handleResponse(res: Response) {
+        if(res.status !== 200) {
+            // error
+            setFailedUpload(true);
+            setTimeout(() => setFailedUpload(false), 10000);
+        } else {
+            setSuccessfulUpload(true);
+            // reset form values
+            document.querySelector('form')!.reset();
+            setTimeout(() => setSuccessfulUpload(false), 10000);
+        }
     }
 
     function removeLast(category: string, formData: FormData) {
@@ -91,6 +102,9 @@ function AdminView() {
                 <Button type='submit' id='submit' variant="contained">
                     Submit
                 </Button>
+                <div className='alert-container'>
+                    {(successfulUpload && <Alert severity="success">Recipe successfully added!</Alert>) || (failedUpload && <Alert severity="error">Error: Recipe not uploaded</Alert>)}
+                </div>
             </form>
         </Box>
     );

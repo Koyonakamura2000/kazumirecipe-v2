@@ -1,4 +1,4 @@
-import { Box, AppBar, Toolbar, Typography, Button, Modal, TextField} from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Button, Modal, TextField, Alert} from '@mui/material';
 import React, { useState } from 'react';
 import { auth } from './App';
 import { signInWithCustomToken, signOut } from 'firebase/auth';
@@ -29,6 +29,7 @@ function NavigationBar(props: NavProps) {
     const [open, setOpen] = useState(false);
     const [disabled, setDisabled] = useState(true);
     const [loginBtnText, setLoginBtnText] = useState('Login');
+    const [failedLogin, setFailedLogin] = useState(false);
     
     const handleOpen = () => {
         if(loginBtnText === 'Login') {
@@ -41,6 +42,7 @@ function NavigationBar(props: NavProps) {
     const handleClose = () => {
         setOpen(false);
         setDisabled(true);
+        setFailedLogin(false);
     }
 
     function handleChange() {
@@ -66,7 +68,6 @@ function NavigationBar(props: NavProps) {
         const usernameInput = document.getElementById('username') as HTMLInputElement;
         const passwordInput = document.getElementById('password') as HTMLInputElement;
         verifyUser(usernameInput.value, passwordInput.value);
-        setOpen(false);
     }
 
     // fetch POST request to kazumirecipeapi to see if user in database, update isAdmin prop if so
@@ -83,14 +84,15 @@ function NavigationBar(props: NavProps) {
     function readResponse(json: any) {
         if(json.isAdmin) {
             handleLogin(json.token);
+            setOpen(false);
         } else {
-            console.log('invalid user');
+            setFailedLogin(true);
         }
     }
 
     function handleLogin(token: string) {
         props.setAdmin(true);
-        signInWithCustomToken(auth, token).then((userCredential) => console.log(userCredential)).catch(console.log);
+        signInWithCustomToken(auth, token).catch(console.log);
         setLoginBtnText('Log Out');
     }
 
@@ -122,6 +124,7 @@ function NavigationBar(props: NavProps) {
                             <Button type='submit' id='submit' variant="contained" disabled={disabled}>
                                 Submit
                             </Button>
+                            {failedLogin && <Alert severity="error">This is an error alert — check it out!</Alert>}
                         </form>
                     </Box>
                 </Modal>
