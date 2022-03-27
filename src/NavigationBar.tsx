@@ -2,6 +2,7 @@ import { Box, AppBar, Toolbar, Typography, Button, Modal, TextField, Alert} from
 import React, { useState } from 'react';
 import { auth } from './App';
 import { signInWithCustomToken, signOut } from 'firebase/auth';
+import './NavigationBar.css';
 
 /*
     Resources:
